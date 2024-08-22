@@ -23,4 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-src/assets/data/
+# Nico's Personal files
+src/data/

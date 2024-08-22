@@ -1,3 +1,5 @@
+I needed to make a budget. This will be a simple website to parse my previous bank statements and create an analysis
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
