@@ -20,10 +20,14 @@
         "next": "14.2.6",
         "next-connect": "^1.0.0",
         "pdf-parse": "^1.1.1",
+        "pdf2json": "^3.1.4",
         "react": "^18",
         "react-dom": "^18",
+        "react-filepond": "^7.1.2",
         "tailwind-merge": "^2.5.2",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "uuid": "^10.0.0",
+        "xml2js": "^0.6.2"
     },
     "devDependencies": {
         "@types/formidable": "^3.4.5",
@@ -32,6 +36,7 @@
         "@types/pdf-parse": "^1.1.4",
         "@types/react": "^18",
         "@types/react-dom": "^18",
+        "@types/uuid": "^10.0.0",
         "eslint": "^8",
         "eslint-config-next": "14.2.6",
         "postcss": "^8",
