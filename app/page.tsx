@@ -1,5 +1,5 @@
-import Sidebar from "./views/SideBar/Sidebar";
-import MainContent from "./views/MainContent/MainContent";
+import MainContent from "@/src/views/MainContent/MainContent";
+import Sidebar from "@/src/views/SideBar/Sidebar";
 
 const Home = () => {
     return (

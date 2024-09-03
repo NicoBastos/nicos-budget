@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+
+import { Button } from "@/src/components/ui/button";
 import FileList from "./Filelist/Filelist";
 const Sidebar = () => {
     return (
