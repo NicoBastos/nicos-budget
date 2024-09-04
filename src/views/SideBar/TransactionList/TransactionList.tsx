@@ -1,38 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import TransactionItem from "./TransactionItem/TransactionItem";
 
+interface TransactionListProps {
+    transactions: Transaction[];
+    setTransactions: Dispatch<SetStateAction<Transaction[]>>;
+}
 
-
-const TransactionList: React.FC = () => {
-    const initialTransactions: Transaction[] = [
-        {
-            date: "10/10",
-            amount: "8.52",
-            description: "Withdrawal: 1062 Debit Card Purchase 7-Eleven 38342",
-        },
-        // Add more sample transactions if you want to test scrolling behavior
-        {
-            date: "10/11",
-            amount: "15.00",
-            description: "Withdrawal: 1062 Debit Card Purchase Grocery Store",
-        },
-        {
-            date: "10/12",
-            amount: "20.00",
-            description: "ATM Withdrawal",
-        },
-        {
-            date: "10/13",
-            amount: "5.25",
-            description: "Coffee Shop Purchase",
-        },
-        // Add more as needed...
-    ];
-
-    const [transactions, setTransactions] =
-        useState<Transaction[]>(initialTransactions);
-
+const TransactionList: React.FC<TransactionListProps> = ({
+    transactions,
+    setTransactions,
+}) => {
     const handleDelete = (transactionToDelete: Transaction): void => {
         setTransactions(
             transactions.filter(
