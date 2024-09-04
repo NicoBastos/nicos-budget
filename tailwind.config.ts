@@ -82,6 +82,7 @@ const config = {
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
+                "transition-height": "height 300ms ease-in-out",
             },
         },
     },

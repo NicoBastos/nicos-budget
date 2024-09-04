@@ -1,7 +1,10 @@
+// FileUpload.tsx
+import React from "react";
 import { FilePond } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 import { useStatements } from "@/src/context/statementsContext";
 import type { FilePondFile, FilePondErrorDescription } from "filepond";
+
 const FileUpload: React.FC = () => {
     const { setStatements } = useStatements();
 
@@ -31,12 +34,10 @@ const FileUpload: React.FC = () => {
                     url: "/api/upload",
                     method: "POST",
                     withCredentials: false,
-                    // Remove the "Content-Type" header, let the browser set it to multipart/form-data
                     timeout: 7000,
-                    onload: (response: string) => response,
-                    onerror: (response: any) => {
-                        console.error("Error Response:", response);
-                    },
+                    onload: (response) => response,
+                    onerror: (response) =>
+                        console.error("Error Response:", response),
                 },
                 fetch: null,
                 revert: null,

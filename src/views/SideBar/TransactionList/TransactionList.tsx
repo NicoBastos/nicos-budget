@@ -1,47 +1,35 @@
-"use client";
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import TransactionItem from "./TransactionItem/TransactionItem";
 
-interface TransactionListProps {
+interface Props {
     transactions: Transaction[];
-    setTransactions: Dispatch<SetStateAction<Transaction[]>>;
+    setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
 }
 
-const TransactionList: React.FC<TransactionListProps> = ({
+const TransactionList: React.FC<Props> = ({
     transactions,
     setTransactions,
 }) => {
-    const handleDelete = (transactionToDelete: Transaction): void => {
-        setTransactions(
-            transactions.filter(
-                (transaction) => transaction !== transactionToDelete,
-            ),
-        );
-    };
-
-    const handleEdit = (editedTransaction: Transaction): void => {
-        setTransactions(
-            transactions.map((transaction) =>
-                transaction.date === editedTransaction.date
-                    ? editedTransaction
-                    : transaction,
-            ),
-        );
-    };
-
     return (
-        <div className="bg-charcoalGray p-4 rounded-lg shadow-lg h-full flex flex-col">
-            <h2 className="text-xl text-champagne mb-4">Transactions</h2>
-            <div className="overflow-y-auto flex-grow">
-                {transactions.map((transaction, index) => (
-                    <TransactionItem
-                        key={index}
-                        transaction={transaction}
-                        onDelete={handleDelete}
-                        onEdit={handleEdit}
-                    />
-                ))}
-            </div>
+        <div className="overflow-y-auto max-h-96 shadow rounded-lg m-[-16px]">
+            <table className="w-full">
+                <thead className="bg-charcoalGray text-cream">
+                    <tr>
+                        <th className="p-3">Date</th>
+                        <th className="p-3">Amount</th>
+                        <th className="p-3">Description</th>
+                    </tr>
+                </thead>
+                <tbody className="bg-cream">
+                    {transactions.map((transaction, index) => (
+                        <TransactionItem
+                            key={index}
+                            transaction={transaction}
+                            setTransactions={setTransactions}
+                        />
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

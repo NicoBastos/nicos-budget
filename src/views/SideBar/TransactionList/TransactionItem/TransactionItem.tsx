@@ -1,110 +1,88 @@
 import React, { useState } from "react";
 
-// Define the props for the component, including functions for delete and edit
-interface TransactionItemProps {
+interface Props {
     transaction: Transaction;
-    onDelete: (transaction: Transaction) => void;
-    onEdit: (transaction: Transaction) => void;
+    setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>;
 }
 
-const TransactionItem: React.FC<TransactionItemProps> = ({
-    transaction,
-    onDelete,
-    onEdit,
-}) => {
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [editedTransaction, setEditedTransaction] = useState<Transaction>({
-        ...transaction,
-    });
+const TransactionItem: React.FC<Props> = ({ transaction, setTransactions }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedTransaction, setEditedTransaction] =
+        useState<Transaction>(transaction);
 
-    const handleEditToggle = (): void => {
-        setIsEditing(!isEditing);
+    const handleInputChange = (field: keyof Transaction, value: string) => {
+        setEditedTransaction({ ...editedTransaction, [field]: value });
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        const { name, value } = e.target;
-        setEditedTransaction((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleSave = (): void => {
-        onEdit(editedTransaction);
+    const handleSave = () => {
+        // Implement save logic here to update the transaction
         setIsEditing(false);
     };
 
+    const handleEditToggle = () => setIsEditing(!isEditing);
+
     return (
-        <div className="border border-bistre p-4 mb-4 bg-silver rounded-lg">
-            {isEditing ? (
-                <div className="space-y-2">
+        <tr className="border-2">
+            <td className={`p-1 ${isEditing ? "bg-cream" : ""}`}>
+                {isEditing ? (
                     <input
                         type="text"
-                        name="date"
                         value={editedTransaction.date}
-                        onChange={handleChange}
-                        placeholder="Date"
-                        className="p-2 bg-cream border border-bistre rounded-md w-full"
+                        onChange={(e) =>
+                            handleInputChange("date", e.target.value)
+                        }
+                        className="w-full p-2 bg-blush rounded"
                     />
+                ) : (
+                    transaction.date
+                )}
+            </td>
+            <td className={`p-1 ${isEditing ? "bg-cream" : ""}`}>
+                {isEditing ? (
                     <input
                         type="text"
-                        name="amount"
                         value={editedTransaction.amount}
-                        onChange={handleChange}
-                        placeholder="Amount"
-                        className="p-2 bg-cream border border-bistre rounded-md w-full"
+                        onChange={(e) =>
+                            handleInputChange("amount", e.target.value)
+                        }
+                        className="w-full p-2 bg-blush rounded"
                     />
+                ) : (
+                    transaction.amount
+                )}
+            </td>
+            <td className={`p-1 ${isEditing ? "bg-cream" : ""}`}>
+                {isEditing ? (
                     <input
                         type="text"
-                        name="description"
                         value={editedTransaction.description}
-                        onChange={handleChange}
-                        placeholder="Description"
-                        className="p-2 bg-cream border border-bistre rounded-md w-full"
+                        onChange={(e) =>
+                            handleInputChange("description", e.target.value)
+                        }
+                        className="w-full p-2 bg-blush rounded"
                     />
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleSave}
-                            className="p-2 bg-teal text-champagne rounded-md"
-                        >
-                            Save
-                        </button>
-                        <button
-                            onClick={handleEditToggle}
-                            className="p-2 bg-blush text-champagne rounded-md"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            ) : (
-                <div>
-                    <p>
-                        <strong>Date:</strong> {transaction.date}
-                    </p>
-                    <p>
-                        <strong>Amount:</strong> {transaction.amount}
-                    </p>
-                    <p>
-                        <strong>Description:</strong> {transaction.description}
-                    </p>
-                    <div className="flex gap-2">
-                        <button
-                            onClick={handleEditToggle}
-                            className="p-2 bg-teal text-champagne rounded-md"
-                        >
-                            Edit
-                        </button>
-                        <button
-                            onClick={() => onDelete(transaction)}
-                            className="p-2 bg-burntSienna text-champagne rounded-md"
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </div>
-            )}
-        </div>
+                ) : (
+                    transaction.description
+                )}
+            </td>
+            <td className="p-1 text-right">
+                {isEditing ? (
+                    <button
+                        className="bg-teal text-cream px-4 py-2 rounded"
+                        onClick={handleSave}
+                    >
+                        Save
+                    </button>
+                ) : (
+                    <button
+                        className="bg-teal text-cream px-4 py-2 rounded"
+                        onClick={handleEditToggle}
+                    >
+                        Edit
+                    </button>
+                )}
+            </td>
+        </tr>
     );
 };
 
