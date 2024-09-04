@@ -1,54 +1,27 @@
 "use client";
-import { FilePond } from "react-filepond";
-import type { FilePondFile } from "react-filepond/types";
+
+import { FilePond, registerPlugin } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 import { useState } from "react";
-// import xml2js from "xml2js"; // Import the XML parser (if you plan to use it)
+import type { FilePondFile, FilePondErrorDescription } from "filepond";
 
-// Define the type for the server response (before parsing)
-type ServerResponse = string | null;
-
-// Define the type for the parsed XML response (if applicable)
-interface ParsedResponse {
-    files: {
-        file: Array<{
-            fileName: string[];
-            parsedText: string[];
-        }>;
-    };
+// Define the type for the server response
+interface Transaction {
+    date: string;
+    amount: number;
+    description: string;
 }
 
-// // Define custom types if needed
-// interface FilePondFile {
-//     serverId: string | null; // The ID returned by the server
-//     file: File; // The actual file object
-//     status: string; // Status of the file in the upload process
-//     progress: {
-//         // Progress information
-//         percentage: number;
-//         bytesUploaded: number;
-//         totalBytes: number;
-//     };
-//     origin: string; // The source of the file (local, remote, etc.)
-//     metadata: Record<string, any>; // Any additional metadata
-// }
-
-interface FilePondError {
-    main: string; // A primary error message or code
-    sub?: string; // A detailed error message (optional)
-    code?: string; // An error code (optional)
-    file?: FilePondFile; // The file associated with the error (optional)
-    status?: number; // HTTP status code if applicable (optional)
+interface Statement {
+    fileName: string;
+    transactions: Transaction[];
 }
 
 export default function FileUpload() {
-    const [serverResponse, setServerResponse] = useState<ServerResponse>(null);
-    const [parsedResponse, setParsedResponse] = useState<ParsedResponse | null>(
-        null,
-    );
+    const [statements, setStatements] = useState<Statement[]>([]);
 
     const handleProcessFile = (
-        error: FilePondError | null,
+        error: FilePondErrorDescription | null,
         file: FilePondFile,
     ) => {
         if (error) {
@@ -56,40 +29,31 @@ export default function FileUpload() {
             return;
         }
 
-        // Assuming the server response is XML and stored in serverId
-        const response: string = file.serverId as string;
+        try {
+            // Assuming the server response is JSON and stored in serverId
+            const response: Statement = JSON.parse(file.serverId as string);
 
-        // Here is where you would parse the XML response into a JavaScript object
-        // Example (using xml2js or similar):
-        // const parser = new xml2js.Parser();
-        // parser.parseString(response, (err: Error, result: ParsedResponse) => {
-        //     if (err) {
-        //         console.error("Error parsing XML:", err);
-        //         return;
-        //     }
-        //     setParsedResponse(result); // Update state with the parsed object
-        // });
+            // Update state with the new statement
+            setStatements((prevStatements) => [...prevStatements, response]);
 
-        // For now, we just store the raw XML string in state
-        setServerResponse(response);
-        console.log("Server Response:", response);
+            console.log("Server Response:", response);
+        } catch (e) {
+            console.error("Failed to parse server response:", e);
+        }
     };
 
     return (
         <div>
             <FilePond
-                allowMultiple={true} // Enable multiple file uploads
+                allowMultiple={true}
                 server={{
                     process: {
                         url: "/api/upload",
                         method: "POST",
                         withCredentials: false,
-                        headers: {},
+                        // Remove the "Content-Type" header, let the browser set it to multipart/form-data
                         timeout: 7000,
-                        onload: (response: string) => {
-                            // Return the response as it is (XML string)
-                            return response;
-                        },
+                        onload: (response: string) => response,
                         onerror: (response: any) => {
                             console.error("Error Response:", response);
                         },
@@ -97,27 +61,25 @@ export default function FileUpload() {
                     fetch: null,
                     revert: null,
                 }}
-                onprocessfile={(error, file) =>
-                    handleProcessFile(
-                        error as FilePondError | null,
-                        file as FilePondFile,
-                    )
-                } // Handle the server response
+                onprocessfile={handleProcessFile}
             />
-
-            {/* {serverResponse && (
-                <div>
-                    <h3>Server Response:</h3>
-                    <pre>{serverResponse}</pre>
-                </div>
-            )} */}
-
-            {parsedResponse && (
-                <div>
-                    <h3>Parsed Response:</h3>
-                    <pre>{JSON.stringify(parsedResponse, null, 2)}</pre>
-                </div>
-            )}
+            <div>
+                <h2>Uploaded Statements</h2>
+                {/* {statements.map((statement, index) => (
+                    <div key={index}>
+                        <h3>{statement.fileName}</h3>
+                        <ul>
+                            {statement.transactions.map((transaction, idx) => (
+                                <li key={idx}>
+                                    {transaction.date}:{" "}
+                                    {transaction.description} - $
+                                    {transaction.amount.toFixed(2)}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))} */}
+            </div>
         </div>
     );
 }
