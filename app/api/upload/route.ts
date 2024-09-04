@@ -3,18 +3,12 @@ import * as pdfjs from "pdfjs-dist/legacy/build/pdf.mjs";
 pdfjs.GlobalWorkerOptions.workerSrc =
     "pdfjs-dist/legacy/build/pdf.worker.min.mjs";
 
-interface Transaction {
-    date: string;
-    amount: string;
-    description: string;
-}
 
 export async function POST(req: NextRequest) {
     const formData: FormData = await req.formData();
     const uploadedFiles = formData
         .getAll("filepond")
         .filter((item) => item instanceof File) as File[];
-    console.log("here??");
     let parsedResults: { fileName: string; transactions: Transaction[] }[] = [];
 
     if (uploadedFiles && uploadedFiles.length > 0) {
@@ -73,40 +67,68 @@ function extractTransactions(text: string): Transaction[] {
             continue; // Skip empty lines
         }
 
-        // Detect and skip continuation markers
+        // Detect and skip continuation markers or non-transactional text
         if (
             line.includes(
                 "Banking/Debit Card Withdrawals and Purchases continued on next page",
             ) ||
-            line.includes("- continued")
+            line.includes("- continued") ||
+            line.includes("Page") ||
+            line.includes("For the period") ||
+            line.includes(
+                "For 24-hour information,sign on to PNC Bank Online Banking",
+            ) ||
+            line.includes("Virtual Wallet Spend Statement") ||
+            line.includes("on pnc.com Primary account number: ") ||
+            line.includes("Account Number:") ||
+            line.includes("purchases totaling") ||
+            line.includes(
+                "other Banking Machine/Debit Card deductions totaling",
+            )
         ) {
             skipNext = true;
             continue;
         }
 
         if (skipNext) {
-            // Skip any header or page info lines following the continuation marker
             if (
                 /^Page \d+ of \d+$/.test(line) ||
-                line.includes("Virtual Wallet Spend Statement") ||
-                line.includes("For the period") ||
-                line.includes("Primary account number:")
+                line.includes("Virtual Wallet Spend Statement")
             ) {
                 continue;
             }
             skipNext = false;
         }
 
+        // Start a new transaction when a new date is detected
         if (/^\d{2}\/\d{2}$/.test(line)) {
-            // New date found, process the previous transaction
             if (currentTransactionLines.length > 0) {
                 const combinedLine = currentTransactionLines.join(" ");
                 const match = combinedLine.match(transactionPattern);
                 if (match) {
+                    let description = match[3].trim();
+
+                    // Classify and label transaction type based on description content
+                    if (description.includes("Online Transfer From")) {
+                        description = "Deposit: " + description;
+                    } else if (description.includes("Service Charge")) {
+                        description = "Service Charge: " + description;
+                    } else if (
+                        description.includes("Debit Card Purchase") ||
+                        description.includes("POS Purchase")
+                    ) {
+                        description = "Withdrawal: " + description;
+                    } else if (description.includes("Venmo")) {
+                        description =
+                            "Withdrawal: " + description + " (Venmo Payment)";
+                    } else {
+                        description = "Other: " + description;
+                    }
+
                     transactions.push({
                         date: match[1],
                         amount: match[2].replace(/,/g, ""), // Remove commas from the amount
-                        description: match[3].trim(),
+                        description: description,
                     });
                 }
                 currentTransactionLines = []; // Reset for the next transaction
@@ -120,10 +142,28 @@ function extractTransactions(text: string): Transaction[] {
         const combinedLine = currentTransactionLines.join(" ");
         const match = combinedLine.match(transactionPattern);
         if (match) {
+            let description = match[3].trim();
+
+            // Classify and label transaction type based on description content
+            if (description.includes("Online Transfer From")) {
+                description = "Deposit: " + description;
+            } else if (description.includes("Service Charge")) {
+                description = "Service Charge: " + description;
+            } else if (
+                description.includes("Debit Card Purchase") ||
+                description.includes("POS Purchase")
+            ) {
+                description = "Withdrawal: " + description;
+            } else if (description.includes("Venmo")) {
+                description = "Withdrawal: " + description + " (Venmo Payment)";
+            } else {
+                description = "Other: " + description;
+            }
+
             transactions.push({
                 date: match[1],
                 amount: match[2].replace(/,/g, ""), // Remove commas from the amount
-                description: match[3].trim(),
+                description: description,
             });
         }
     }

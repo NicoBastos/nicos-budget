@@ -5,17 +5,7 @@ import "filepond/dist/filepond.min.css";
 import { useState } from "react";
 import type { FilePondFile, FilePondErrorDescription } from "filepond";
 
-// Define the type for the server response
-interface Transaction {
-    date: string;
-    amount: number;
-    description: string;
-}
 
-interface Statement {
-    fileName: string;
-    transactions: Transaction[];
-}
 
 export default function FileUpload() {
     const [statements, setStatements] = useState<Statement[]>([]);
@@ -64,7 +54,7 @@ export default function FileUpload() {
                 onprocessfile={handleProcessFile}
             />
             <div>
-                <h2>Uploaded Statements</h2>
+                {/* <h2>Uploaded Statements</h2> */}
                 {/* {statements.map((statement, index) => (
                     <div key={index}>
                         <h3>{statement.fileName}</h3>

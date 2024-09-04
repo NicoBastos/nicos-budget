@@ -1,15 +1,13 @@
-import { Button } from "@/src/components/ui/button";
-import FileList from "./Filelist/Filelist";
+import React from "react";
 import FileUpload from "./FileUpload/FileUpload";
-const Sidebar = () => {
+import TransactionList from "./TransactionList/TransactionList";
+
+const Sidebar: React.FC = () => {
     return (
         <div className="col-span-1 bg-khaki rounded-lg shadow-md p-4 flex flex-col gap-4 h-full">
-            <div className="flex flex-col">
-                {/* <Button className="w-full bg-blush text-champagne">
-                    Select Files
-                </Button> */}
+            <h2 className="text-xl text-bistre mb-4">File Upload</h2>
             <FileUpload />
-            </div>
+            <TransactionList />
         </div>
     );
 };
