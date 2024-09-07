@@ -1,41 +1,16 @@
-// Sidebar.tsx
-import React, { useState } from "react";
-import { useStatements } from "@/src/context/statementsContext";
+import React from "react";
 import FileUpload from "./FileUpload/FileUpload";
 import TabbedStatements from "./TabbedStatements/TabbedStatements";
+import Card from "@/src/legos/Card/Card";
 
 const Sidebar: React.FC = () => {
-    const [focusedComponent, setFocusedComponent] = useState<
-        "fileUpload" | "tabbedStatements" | null
-    >(null);
-
     return (
-        <div className="col-span-1 bg-khaki rounded-lg shadow-md p-4 flex flex-col gap-4 h-full">
+        <div className="bg-khaki rounded-lg shadow-md p-4 gap-4 h-full">
             <h2 className="text-xl text-bistre mb-4">File Upload</h2>
-            <div
-                className={
-                    focusedComponent === "tabbedStatements"
-                        ? "h-10 overflow-hidden transition-height duration-300 ease-in-out"
-                        : "flex-grow transition-height duration-300 ease-in-out"
-                }
-                tabIndex={0}
-                onFocus={() => setFocusedComponent("fileUpload")}
-                onBlur={() => setFocusedComponent(null)}
-            >
+            <Card isVertical={false} childContainerClassName="m-1">
                 <FileUpload />
-            </div>
-            <div
-                className={
-                    focusedComponent === "fileUpload"
-                        ? "h-10 overflow-hidden transition-height duration-300 ease-in-out"
-                        : "flex-grow transition-height duration-300 ease-in-out"
-                }
-                tabIndex={0}
-                onFocus={() => setFocusedComponent("tabbedStatements")}
-                onBlur={() => setFocusedComponent(null)}
-            >
                 <TabbedStatements />
-            </div>
+            </Card>
         </div>
     );
 };

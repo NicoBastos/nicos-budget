@@ -67,3 +67,24 @@
         @apply bg-background text-foreground;
     }
 }
+
+@layer utilities {
+    .no-scrollbar {
+        scrollbar-width: none; /* For Firefox */
+        -ms-overflow-style: none; /* For Internet Explorer */
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Opera */
+    }
+
+    .no-x-scrollbar {
+        scrollbar-width: none; /* For Firefox */
+        -ms-overflow-style: none; /* For Internet Explorer */
+        overflow-y: auto;
+    }
+    .no-x-scrollbar::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Opera */
+        overflow-y: auto;
+    }
+}

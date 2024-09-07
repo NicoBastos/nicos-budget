@@ -11,7 +11,7 @@ const TransactionList: React.FC<Props> = ({
     setTransactions,
 }) => {
     return (
-        <div className="overflow-y-auto max-h-96 shadow rounded-lg m-[-16px]">
+        <div className="shadow rounded-lg m-[-16px]">
             <table className="w-full">
                 <thead className="bg-charcoalGray text-cream">
                     <tr>

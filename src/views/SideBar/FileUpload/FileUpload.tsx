@@ -43,6 +43,7 @@ const FileUpload: React.FC = () => {
                 revert: null,
             }}
             onprocessfile={handleProcessFile}
+            
         />
     );
 };

@@ -1,14 +1,15 @@
-// TabbedStatements.tsx
 import React, { useState } from "react";
 import TransactionList from "../TransactionList/TransactionList";
 import { useStatements } from "@/src/context/statementsContext";
+import Card from "@/src/legos/Card/Card";
 
 const TabbedStatements: React.FC = () => {
     const { statements, setStatements } = useStatements();
-    const [activeTab, setActiveTab] = useState<number>(0);
+    const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
-    const handleTabClick = (index: number): void => {
-        setActiveTab(index);
+    // Directly handle clicks to set the focusedIndex without clearing it unnecessarily
+    const handleFocusChange = (index: number) => {
+        setFocusedIndex((prevIndex) => (prevIndex === index ? null : index));
     };
 
     const setTransactionsForStatement = (
@@ -16,7 +17,7 @@ const TabbedStatements: React.FC = () => {
     ): void => {
         setStatements((prevStatements) =>
             prevStatements.map((statement, i) =>
-                i === activeTab
+                i === focusedIndex
                     ? {
                           ...statement,
                           transactions:
@@ -30,29 +31,29 @@ const TabbedStatements: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col h-full">
-            <div className="flex flex-wrap border-b border-silver">
-                {statements.map((statement, index) => (
-                    <button
-                        key={index}
-                        className={`flex-grow md:flex-1 p-2 text-xs md:text-sm lg:text-base font-medium text-center rounded-t-lg cursor-pointer
-                                    ${activeTab === index ? "bg-charcoalGray text-cream" : "bg-cream text-bistre"}
-                                    hover:bg-champagne transition-colors duration-300 whitespace-nowrap`}
-                        onClick={() => handleTabClick(index)}
-                    >
-                        {statement.fileName}
-                    </button>
-                ))}
-            </div>
-            <div className="flex-grow p-4 bg-cream overflow-y-auto">
-                {statements.length > 0 && (
-                    <TransactionList
-                        transactions={statements[activeTab].transactions}
-                        setTransactions={setTransactionsForStatement}
-                    />
-                )}
-            </div>
-        </div>
+        <Card isVertical={true} childContainerClassName="m-0.5">
+            {statements.map((statement, index) => (
+                <div
+                    key={index}
+                    className="h-full p-4 bg-cream overflow-y-scroll no-scrollbar"
+                >
+                    {focusedIndex !== index && (
+                        <div
+                            className="text-center p-2 bg-charcoalGray text-cream rounded-t-lg cursor-pointer"
+                            onClick={() => handleFocusChange(index)} // Handle focus manually without toggling twice
+                        >
+                            {statement.fileName}
+                        </div>
+                    )}
+                    {focusedIndex === index && (
+                        <TransactionList
+                            transactions={statement.transactions}
+                            setTransactions={setTransactionsForStatement}
+                        />
+                    )}
+                </div>
+            ))}
+        </Card>
     );
 };
 

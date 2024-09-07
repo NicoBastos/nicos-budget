@@ -1,4 +1,4 @@
-const MainContent = () => {
+const MainContent: React.FC = () => {
     return (
         <div className="col-span-3 bg-khaki rounded-lg shadow-md p-4 h-full flex flex-col">
             <h2 className="text-lg font-bold text-bistre">Analysis Graphs</h2>

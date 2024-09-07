@@ -22,7 +22,7 @@ const TransactionItem: React.FC<Props> = ({ transaction, setTransactions }) => {
     const handleEditToggle = () => setIsEditing(!isEditing);
 
     return (
-        <tr className="border-2">
+        <tr className="border-2 ">
             <td className={`p-1 ${isEditing ? "bg-cream" : ""}`}>
                 {isEditing ? (
                     <input
